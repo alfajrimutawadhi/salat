@@ -19,5 +19,6 @@ show-location		to show your set location,
 			default location is in the city of Jakarta, Indonesia
 set-location		to change your set location
 date			to display the current hijri date
+calendar		to display hijri calendar of the current month
 	`
 )

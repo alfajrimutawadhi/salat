@@ -52,25 +52,29 @@ func main() {
 			setLocation(path, &loc)
 		case constant.Date:
 			dateHijri(path)
+		case constant.Calendar:
+			calendarHijri(path)
 		default:
 			fmt.Println(constant.Help)
-
 		}
 	}
 
 }
 
 func scheduleNow(path string) {
-	h, m, s := time.Now().Clock()
+	ti := time.Now()
+	h, m, s := ti.Clock()
 	fmt.Printf("Time now = %d:%d:%d\n", h, m, s)
 
 	var sc domain.Salat
 
 	cl := common.ReadLocation(path)
-	res := api.RequestAPI(cl)
+	res := api.RequestAPI(cl, "s", ti)
 
 	var tmp domain.Response
-	json.Unmarshal(res, &tmp)
+	if err := json.Unmarshal(res, &tmp); err != nil {
+		common.HandleError(err)
+	}
 	sc = tmp.Data.Timings
 
 	fmt.Println("Location =", cl.City)
@@ -78,13 +82,14 @@ func scheduleNow(path string) {
 	t.SetOutputMirror(os.Stdout)
 	t.AppendHeader(table.Row{"Salat", "Schedule"})
 	t.AppendRows([]table.Row{
-		{"Fajr", sc.Fajr},
-		{"Dhuhr", sc.Dhuhr},
-		{"Asr", sc.Asr},
-		{"Maghrib", sc.Maghrib},
-		{"Isha", sc.Isha},
+		{constant.Fajr, sc.Fajr},
+		{constant.Dhuhr, sc.Dhuhr},
+		{constant.Asr, sc.Asr},
+		{constant.Maghrib, sc.Maghrib},
+		{constant.Isha, sc.Isha},
 	})
 	t.Render()
+
 }
 
 func showLocation(path string) {
@@ -110,20 +115,117 @@ func setLocation(path string, req *domain.Location) {
 }
 
 func dateHijri(path string) {
+	ti := time.Now()
 	var d domain.Date
 
 	cl := common.ReadLocation(path)
-	res := api.RequestAPI(cl)
+	// easier with use API sholat
+	res := api.RequestAPI(cl, "s", ti)
 
 	var tmp domain.Response
 	json.Unmarshal(res, &tmp)
-	d.Hijri.Day = tmp.Data.Date.Hijri.Day
-	d.Hijri.Month = tmp.Data.Date.Hijri.Month
-	d.Hijri.Year = tmp.Data.Date.Hijri.Year
+	d.Hijri = tmp.Data.Date.Hijri
 
 	t := table.NewWriter()
 	t.SetOutputMirror(os.Stdout)
 	t.AppendHeader(table.Row{"Current date"})
 	t.AppendRows([]table.Row{{fmt.Sprintf("%s %s %sH", d.Hijri.Day, d.Hijri.Month.En, d.Hijri.Year)}})
 	t.Render()
+}
+
+func calendarHijri(path string) {
+	var d []domain.Date
+
+	ti := time.Now().Add(1000*time.Hour)
+	cl := common.ReadLocation(path)
+	res := api.RequestAPI(cl, "d", ti)
+
+	var tmp domain.ResponseDate
+	if err := json.Unmarshal(res, &tmp); err != nil {
+		common.HandleError(err)
+	}
+	for i := range tmp.Data {
+		d = append(d, tmp.Data[i].Date)
+	}
+
+	rowConfigAutoMerge := table.RowConfig{AutoMerge: true}
+	t := table.NewWriter()
+	t.SetOutputMirror(os.Stdout)
+	t.AppendRow(table.Row{
+		"",
+		ti.Year(),
+		ti.Year(),
+		ti.Year(),
+		d[0].Hijri.Year + "H",
+		d[0].Hijri.Year + "H",
+		"",
+	}, rowConfigAutoMerge)
+
+	// check hijri month name
+	me := d[0].Hijri.Month.En
+	for i := range d {
+		if d[i].Hijri.Month.En != me {
+			me = fmt.Sprintf("%s - %s", me, d[i].Hijri.Month.En)
+			break
+		}
+	}
+	t.AppendRow(table.Row{
+		"",
+		ti.Month().String(),
+		ti.Month().String(),
+		ti.Month().String(),
+		me,
+		me,
+		"",
+	}, rowConfigAutoMerge)
+
+	t.AppendSeparator()
+	t.AppendRow(table.Row{
+		constant.Sun,
+		constant.Mon,
+		constant.Tue,
+		constant.Wed,
+		constant.Thu,
+		constant.Fri,
+		constant.Sat,
+	})
+	t.AppendSeparator()
+
+	dt := handleDate(d)
+
+	t.AppendRows(dt)
+	t.Render()
+}
+
+func handleDate(d []domain.Date) []table.Row {
+	var dt []table.Row
+	sd := []string{
+		constant.Sunday,
+		constant.Monday,
+		constant.Tuesday,
+		constant.Wednesday,
+		constant.Thursday,
+		constant.Friday,
+		constant.Saturday,
+	}
+
+	for i := 0; i < len(d); i++ {
+		var row []interface{}
+		for j := 0; j < len(sd); j++ {
+			if i < len(d) {
+				if d[i].Gregorian.Weekday.En == sd[j] {
+					row = append(row, fmt.Sprintf("%s (%s)", d[i].Gregorian.Day, d[i].Hijri.Day))
+					i++
+				} else {
+					row = append(row, "")
+				}
+			} else {
+				break
+			}
+		}
+		i--
+		dt = append(dt, row)
+	}
+
+	return dt
 }

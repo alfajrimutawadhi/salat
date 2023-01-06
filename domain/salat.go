@@ -14,14 +14,21 @@ type Response struct {
 	Data   MetaData `json:"data"`
 }
 
+type ResponseDate struct {
+	Code   int        `json:"code"`
+	Status string     `json:"status"`
+	Data   []MetaData `json:"data"`
+}
+
 type MetaData struct {
 	Timings Salat       `json:"timings"`
 	Date    Date        `json:"date"`
-	Meta    interface{} `json:"meta"`
+	Meta    interface{} `json:"meta"` // ignore response meta
 }
 
 type Date struct {
-	Greogrian struct {
+	Gregorian struct {
+		Day     string `json:"day"`
 		Weekday struct {
 			En string `json:"en"`
 		} `json:"weekday"`

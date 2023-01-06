@@ -7,6 +7,7 @@ import (
 	"net/http"
 	"os"
 	"strings"
+	"time"
 
 	"github.com/alfajrimutawadhi/salat/common"
 	"github.com/alfajrimutawadhi/salat/constant"
@@ -14,8 +15,14 @@ import (
 )
 
 // returns response API in byte
-func RequestAPI(cl *domain.Location) []byte {
-	url := fmt.Sprintf("https://%s/timingsByCity?country=%s&city=%s&method=1", constant.HeaderHost, cl.Country, cl.City)
+func RequestAPI(cl *domain.Location, nec string, t time.Time) []byte {
+	var url string
+
+	if nec == "d" {
+		url = fmt.Sprintf("https://%s/calendarByCity?country=%s&city=%s&method=1&month=%d&year=%d", constant.HeaderHost, cl.Country, cl.City, int(t.Month()), t.Year())
+	} else {
+		url = fmt.Sprintf("https://%s/timingsByCity?country=%s&city=%s&method=1", constant.HeaderHost, cl.Country, cl.City)
+	}
 
 	req, err := http.NewRequest("GET", url, nil)
 	if err != nil {
