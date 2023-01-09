@@ -19,7 +19,7 @@ jobs:
         github_token: ${{ secrets.GITHUB_TOKEN }}
         goos: ${{ matrix.goos }}
         goarch: ${{ matrix.goarch }}
-        goversion: "https://dl.google.com/go/go1.19.1.linux-amd64.tar.gz"
+        goversion: "https://dl.google.com/go/go1.19.linux-amd64.tar.gz"
         project_path: "./cmd"
         binary_name: "salat"
         extra_files: location.toml LICENSE README.md 
