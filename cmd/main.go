@@ -18,8 +18,7 @@ import (
 var version string = "v1.0.0"
 
 func main() {
-	// path := os.Getenv("HOME")
-	path, _ := os.Getwd()
+	path := os.Getenv("HOME")
 
 	args := os.Args
 	if len(args) == 1 {
@@ -94,11 +93,9 @@ func scheduleNow(path string) {
 
 func showLocation(path string) {
 	fmt.Println("Your current location")
-	b, err := os.ReadFile(fmt.Sprintf("%s/location.toml", path))
-	if err != nil {
-		common.HandleError(err)
-	}
-	fmt.Println(string(b))
+	lc := common.ReadLocation(path)
+	l := fmt.Sprintf("Country = %s\nCity = %s", lc.Country, lc.City)
+	fmt.Println(l)
 }
 
 func setLocation(path string, req *domain.Location) {
@@ -109,7 +106,8 @@ func setLocation(path string, req *domain.Location) {
 	}
 
 	nl := strings.Join(sl, "\n")
-	if err := os.WriteFile(fmt.Sprintf("%s/location.toml", path), []byte(nl), os.ModeAppend); err != nil {
+	
+	if err := os.WriteFile(fmt.Sprintf("%s/.salat/location.toml", path), []byte(nl), os.ModeAppend.Perm()); err != nil {
 		common.HandleError(err)
 	}
 }
@@ -136,7 +134,7 @@ func dateHijri(path string) {
 func calendarHijri(path string) {
 	var d []domain.Date
 
-	ti := time.Now().Add(1000*time.Hour)
+	ti := time.Now()
 	cl := common.ReadLocation(path)
 	res := api.RequestAPI(cl, "d", ti)
 

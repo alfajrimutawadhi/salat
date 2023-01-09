@@ -11,7 +11,7 @@ import (
 
 func ReadLocation(path string) *domain.Location {
 	var loc domain.Location
-	cf, err := os.ReadFile(fmt.Sprintf("%s/location.toml", path))
+	cf, err := os.ReadFile(fmt.Sprintf("%s/.salat/location.toml", path))
 	if err != nil {
 		HandleError(err)
 	}
