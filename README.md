@@ -6,7 +6,7 @@ Salat CLI helps you to know the time in Islam
 - MacOS (amd64, arm64)
 
 ## How to install
-- Running by script
+- Install by script
     ```
     curl -sfL https://raw.githubusercontent.com/alfajrimutawadhi/salat/master/install.sh | bash -
     ```
