@@ -14,7 +14,7 @@ fi
 
 if [ "$arch" == "x86_64" ]; then
     arch="amd64"
-elif [ "$arch" == "aarch64" ]; then
+elif [ "$arch" == "arm64" ]; then
     arch="arm64"
 else
     echo "Unsupported architecture: $arch"
