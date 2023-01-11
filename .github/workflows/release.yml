@@ -22,4 +22,4 @@ jobs:
         goversion: "https://dl.google.com/go/go1.19.linux-amd64.tar.gz"
         project_path: "./cmd"
         binary_name: "salat"
-        extra_files: location.toml LICENSE README.md 
+        extra_files: config.json LICENSE README.md 
