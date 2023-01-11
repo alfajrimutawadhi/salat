@@ -126,8 +126,7 @@ func setLocation(path string, req *salat.Location) {
 		common.HandleError(err)
 	}
 
-	// if err := os.WriteFile(fmt.Sprintf("%s/.salat/config.json", path), []byte(cf), os.ModeAppend.Perm()); err != nil {
-	if err := os.WriteFile(fmt.Sprintf("%s/config.json", path), []byte(cf), os.ModeAppend.Perm()); err != nil {
+	if err := os.WriteFile(fmt.Sprintf("%s/.salat/config.json", path), []byte(cf), os.ModeAppend.Perm()); err != nil {
 		common.HandleError(err)
 	}
 }
@@ -270,8 +269,7 @@ func setTimeMode(path string, req string) {
 		common.HandleError(err)
 	}
 
-	// if err := os.WriteFile(fmt.Sprintf("%s/.salat/config.json", path), []byte(cf), os.ModeAppend.Perm()); err != nil {
-	if err := os.WriteFile(fmt.Sprintf("%s/config.json", path), []byte(cf), os.ModeAppend.Perm()); err != nil {
+	if err := os.WriteFile(fmt.Sprintf("%s/.salat/config.json", path), []byte(cf), os.ModeAppend.Perm()); err != nil {
 		common.HandleError(err)
 	}
 }

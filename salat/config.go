@@ -9,7 +9,7 @@ import (
 )
 
 type Config struct {
-	Location  Location `json:"location"`
+	Location Location `json:"location"`
 	TimeMode int8     `json:"time_mode"` // 1 = 12 Hours; 2 = 24 Hours
 }
 
@@ -20,8 +20,7 @@ type Location struct {
 
 func ReadConfig(path string) *Config {
 	var c Config
-	// cf, err := os.ReadFile(fmt.Sprintf("%s/.salat/config.json", path))
-	cf, err := os.ReadFile(fmt.Sprintf("%s/config.json", path))
+	cf, err := os.ReadFile(fmt.Sprintf("%s/.salat/config.json", path))
 	if err != nil {
 		common.HandleError(err)
 	}
