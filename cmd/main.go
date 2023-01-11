@@ -19,8 +19,7 @@ import (
 var version string = "v1.0.1"
 
 func main() {
-	// path := os.Getenv("HOME")
-	path, _ := os.Getwd()
+	path := os.Getenv("HOME")
 
 	args := os.Args
 	if len(args) == 1 {
