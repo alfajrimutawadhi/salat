@@ -18,6 +18,10 @@ The system will display the current time and prayer schedules based on location
 You can change location with command `set-location`
 ![set location](docs/set-location.png)
 
-2. Hijri Calendar   
+2. Current date Hijri version
+The system will display current date in Hijri version based on your device's time
+![hijri date](docs/date.png)
+
+3. Hijri Calendar   
 The system will display a calendar based on your device's time
 ![hijri calendar](docs/calendar.png)
