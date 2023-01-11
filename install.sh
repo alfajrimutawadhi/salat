@@ -1,5 +1,5 @@
 #!/bin/bash
-version="v1.0.0"
+version="v1.0.1"
 os=$(uname -s)
 arch=$(uname -m)
 
@@ -27,7 +27,7 @@ wget https://github.com/alfajrimutawadhi/salat/releases/download/$version/salat-
 tar -xvf salat-$version-$os-$arch.tar.gz -C salat_install;
 rm salat-$version-$os-$arch.tar.gz;
 chmod +x salat_install/salat;
-chmod 666 salat_install/location.toml;
+chmod 666 salat_install/config.json;
 mkdir ~/.salat;
 mv salat_install/* ~/.salat;
 rm -rf salat_install;

@@ -1,8 +1,5 @@
 # vendor
 vendor/*
 
-# not change default location
-location.toml
-
 # macOS
 .DS_Store

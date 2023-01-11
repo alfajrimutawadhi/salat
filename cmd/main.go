@@ -3,22 +3,24 @@ package main
 import (
 	"bufio"
 	"encoding/json"
+	"errors"
 	"fmt"
 	"os"
+	"strconv"
 	"strings"
 	"time"
 
-	"github.com/alfajrimutawadhi/salat/api"
 	"github.com/alfajrimutawadhi/salat/common"
 	"github.com/alfajrimutawadhi/salat/constant"
-	"github.com/alfajrimutawadhi/salat/domain"
+	"github.com/alfajrimutawadhi/salat/salat"
 	"github.com/jedib0t/go-pretty/v6/table"
 )
 
-var version string = "v1.0.0"
+var version string = "v1.0.1"
 
 func main() {
-	path := os.Getenv("HOME")
+	// path := os.Getenv("HOME")
+	path, _ := os.Getwd()
 
 	args := os.Args
 	if len(args) == 1 {
@@ -33,7 +35,7 @@ func main() {
 			showLocation(path)
 		case constant.SetLocation:
 			var err error
-			var loc domain.Location
+			var loc salat.Location
 			fmt.Print("input your country : ")
 			in := bufio.NewReader(os.Stdin)
 			loc.Country, err = in.ReadString('\n')
@@ -53,6 +55,14 @@ func main() {
 			dateHijri(path)
 		case constant.Calendar:
 			calendarHijri(path)
+		case constant.TimeMode:
+			fmt.Println("Choose time mode format")
+			var m string
+			fmt.Println("1. 12 Hours (AM/PM)")
+			fmt.Println("2. 24 Hours (23:59)")
+			fmt.Print("input time mode (1/2) : ")
+			fmt.Scan(&m)
+			setTimeMode(path, m)
 		default:
 			fmt.Println(constant.Help)
 		}
@@ -62,21 +72,26 @@ func main() {
 
 func scheduleNow(path string) {
 	ti := time.Now()
-	h, m, s := ti.Clock()
-	fmt.Printf("Time now = %d:%d:%d\n", h, m, s)
+	h, m, _ := ti.Clock()
+	c := salat.ReadConfig(path)
+	if c.TimeMode == 2 {
+		fmt.Printf("Time now = %d:%d\n", h, m)
+	} else {
+		fmt.Printf("Time now = %s\n", common.ConvTime24To12(fmt.Sprintf("%d:%d", h, m)))
+	}
 
-	var sc domain.Salat
+	var sc salat.Salat
+	res := salat.RequestAPI(&c.Location, "s", ti)
 
-	cl := common.ReadLocation(path)
-	res := api.RequestAPI(cl, "s", ti)
-
-	var tmp domain.Response
+	var tmp salat.Response
 	if err := json.Unmarshal(res, &tmp); err != nil {
 		common.HandleError(err)
 	}
 	sc = tmp.Data.Timings
 
-	fmt.Println("Location =", cl.City)
+	sc.SetTimeMode(c.TimeMode)
+
+	fmt.Println("Location =", c.Location.City)
 	t := table.NewWriter()
 	t.SetOutputMirror(os.Stdout)
 	t.AppendHeader(table.Row{"Salat", "Schedule"})
@@ -93,34 +108,39 @@ func scheduleNow(path string) {
 
 func showLocation(path string) {
 	fmt.Println("Your current location")
-	lc := common.ReadLocation(path)
-	l := fmt.Sprintf("Country = %s\nCity = %s", lc.Country, lc.City)
+	c := salat.ReadConfig(path)
+	l := fmt.Sprintf("Country = %s\nCity = %s", c.Location.Country, c.Location.City)
 	fmt.Println(l)
 }
 
-func setLocation(path string, req *domain.Location) {
+func setLocation(path string, req *salat.Location) {
 	defer fmt.Println("Successfully changed location")
-	sl := []string{
-		"country = " + req.Country,
-		"city = " + req.City,
+	c := salat.ReadConfig(path)
+
+	d := salat.Config{
+		Location: salat.Location{Country: req.Country, City: req.City},
+		TimeMode: c.TimeMode,
+	}
+	cf, err := json.Marshal(d)
+	if err != nil {
+		common.HandleError(err)
 	}
 
-	nl := strings.Join(sl, "\n")
-	
-	if err := os.WriteFile(fmt.Sprintf("%s/.salat/location.toml", path), []byte(nl), os.ModeAppend.Perm()); err != nil {
+	// if err := os.WriteFile(fmt.Sprintf("%s/.salat/config.json", path), []byte(cf), os.ModeAppend.Perm()); err != nil {
+	if err := os.WriteFile(fmt.Sprintf("%s/config.json", path), []byte(cf), os.ModeAppend.Perm()); err != nil {
 		common.HandleError(err)
 	}
 }
 
 func dateHijri(path string) {
 	ti := time.Now()
-	var d domain.Date
+	var d salat.Date
 
-	cl := common.ReadLocation(path)
-	// easier with use API sholat
-	res := api.RequestAPI(cl, "s", ti)
+	c := salat.ReadConfig(path)
+	// easier with use API prayer schedule
+	res := salat.RequestAPI(&c.Location, "s", ti)
 
-	var tmp domain.Response
+	var tmp salat.Response
 	json.Unmarshal(res, &tmp)
 	d.Hijri = tmp.Data.Date.Hijri
 
@@ -132,13 +152,13 @@ func dateHijri(path string) {
 }
 
 func calendarHijri(path string) {
-	var d []domain.Date
+	var d []salat.Date
 
 	ti := time.Now()
-	cl := common.ReadLocation(path)
-	res := api.RequestAPI(cl, "d", ti)
+	c := salat.ReadConfig(path)
+	res := salat.RequestAPI(&c.Location, "c", ti)
 
-	var tmp domain.ResponseDate
+	var tmp salat.ResponseDate
 	if err := json.Unmarshal(res, &tmp); err != nil {
 		common.HandleError(err)
 	}
@@ -195,7 +215,7 @@ func calendarHijri(path string) {
 	t.Render()
 }
 
-func handleDate(d []domain.Date) []table.Row {
+func handleDate(d []salat.Date) []table.Row {
 	var dt []table.Row
 	sd := []string{
 		constant.Sunday,
@@ -226,4 +246,32 @@ func handleDate(d []domain.Date) []table.Row {
 	}
 
 	return dt
+}
+
+func setTimeMode(path string, req string) {
+	defer fmt.Println("Successfully changed time mode")
+	// validate
+	if req != "1" && req != "2" {
+		err := errors.New("invalid input")
+		common.HandleError(err)
+	}
+	tm, err := strconv.Atoi(req)
+	if err != nil {
+		common.HandleError(err)
+	}
+
+	c := salat.ReadConfig(path)
+	d := salat.Config{
+		Location: c.Location,
+		TimeMode: int8(tm),
+	}
+	cf, err := json.Marshal(d)
+	if err != nil {
+		common.HandleError(err)
+	}
+
+	// if err := os.WriteFile(fmt.Sprintf("%s/.salat/config.json", path), []byte(cf), os.ModeAppend.Perm()); err != nil {
+	if err := os.WriteFile(fmt.Sprintf("%s/config.json", path), []byte(cf), os.ModeAppend.Perm()); err != nil {
+		common.HandleError(err)
+	}
 }

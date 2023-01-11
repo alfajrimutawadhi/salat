@@ -8,6 +8,7 @@ const (
 	SetLocation  = "set-location"
 	Date         = "date"
 	Calendar     = "calendar"
+	TimeMode     = "time-mode"
 
 	HeaderKey  = "734bc5631fmsh4f5cd46a576a8b1p1b4a4bjsn99c232cabd66"
 	HeaderHost = "aladhan.p.rapidapi.com"
@@ -20,5 +21,7 @@ show-location		to show your set location,
 set-location		to change your set location
 date			to display the current hijri date
 calendar		to display hijri calendar of the current month
+time-mode		to change time mode 12 Hours or 24 Hours,
+			default time mode 24 Hours
 	`
 )
