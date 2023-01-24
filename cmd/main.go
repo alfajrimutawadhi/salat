@@ -72,11 +72,21 @@ func main() {
 func scheduleNow(path string) {
 	ti := time.Now()
 	h, m, _ := ti.Clock()
+
+	hou := strconv.Itoa(h)
+	if h < 10 {
+		hou = fmt.Sprintf("0%d", h)
+	}
+	min := strconv.Itoa(m)
+	if m < 10 {
+		min = fmt.Sprintf("0%d", m)
+	}
+
 	c := salat.ReadConfig(path)
 	if c.TimeMode == 2 {
-		fmt.Printf("Time now = %d:%d\n", h, m)
+		fmt.Printf("Time now = %s:%s\n", hou, min)
 	} else {
-		fmt.Printf("Time now = %s\n", common.ConvTime24To12(fmt.Sprintf("%d:%d", h, m)))
+		fmt.Printf("Time now = %s\n", common.ConvTime24To12(fmt.Sprintf("%s:%s", hou, min)))
 	}
 
 	var sc salat.Salat
