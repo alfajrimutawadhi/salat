@@ -16,7 +16,7 @@ import (
 	"github.com/jedib0t/go-pretty/v6/table"
 )
 
-var version string = "v1.0.1"
+var version string = "v1.0.2"
 
 func main() {
 	path := os.Getenv("HOME")
@@ -27,7 +27,7 @@ func main() {
 	} else {
 		switch args[1] {
 		case constant.Version:
-			fmt.Printf("Salat %s", version)
+			fmt.Printf("Salat %s\n", version)
 		case constant.ScheduleNow:
 			scheduleNow(path)
 		case constant.ShowLocation:

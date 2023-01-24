@@ -1,5 +1,5 @@
 #!/bin/bash
-version="v1.0.1"
+version="v1.0.2"
 os=$(uname -s)
 arch=$(uname -m)
 
