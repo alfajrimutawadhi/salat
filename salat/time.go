@@ -7,7 +7,7 @@ func (s *Salat) SetTimeMode(ts int8) Salat {
 		return *s
 	}
 	s.Fajr = common.ConvTime24To12(s.Fajr)
-	s.Dhuhr = common.ConvTime24To12("12:01")
+	s.Dhuhr = common.ConvTime24To12(s.Dhuhr)
 	s.Asr = common.ConvTime24To12(s.Asr)
 	s.Maghrib = common.ConvTime24To12(s.Maghrib)
 	s.Isha = common.ConvTime24To12(s.Isha)
