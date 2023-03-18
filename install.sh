@@ -31,5 +31,5 @@ chmod 666 salat_install/config.json;
 mkdir ~/.salat;
 mv salat_install/* ~/.salat;
 rm -rf salat_install;
-mv ~/.salat/salat /usr/local/bin;
+sudo mv ~/.salat/salat /usr/local/bin;
 echo "==== Salat installed successfully ====";
