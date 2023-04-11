@@ -63,17 +63,15 @@ func RequestAPI(cl *Location, nec string, t time.Time) []byte {
 	var url string
 
 	if nec == "c" {
-		url = fmt.Sprintf("https://%s/calendarByCity?country=%s&city=%s&method=1&month=%d&year=%d", constant.HeaderHost, cl.Country, cl.City, int(t.Month()), t.Year())
+		url = fmt.Sprintf("https://%s/calendarByCity?country=%s&city=%s&method=3&month=%d&year=%d", constant.HeaderHost, cl.Country, cl.City, int(t.Month()), t.Year())
 	} else {
-		url = fmt.Sprintf("https://%s/timingsByCity?country=%s&city=%s&method=1", constant.HeaderHost, cl.Country, cl.City)
+		url = fmt.Sprintf("https://%s/timingsByCity?country=%s&city=%s&method=3", constant.HeaderHost, cl.Country, cl.City)
 	}
 
 	req, err := http.NewRequest("GET", url, nil)
 	if err != nil {
 		common.HandleError(err)
 	}
-	req.Header.Add("X-RapidAPI-Key", constant.HeaderKey)
-	req.Header.Add("X-RapidAPI-Host", constant.HeaderHost)
 
 	res, err := http.DefaultClient.Do(req)
 	if err != nil {

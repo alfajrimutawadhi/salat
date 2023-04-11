@@ -1,5 +1,5 @@
 #!/bin/bash
-version="v1.0.2"
+version="v1.0.3"
 os=$(uname -s)
 arch=$(uname -m)
 
@@ -28,7 +28,9 @@ tar -xvf salat-$version-$os-$arch.tar.gz -C salat_install;
 rm salat-$version-$os-$arch.tar.gz;
 chmod +x salat_install/salat;
 chmod 666 salat_install/config.json;
-mkdir ~/.salat;
+if [ ! -d ~/.salat ]; then
+    mkdir ~/.salat;
+fi
 mv salat_install/* ~/.salat;
 rm -rf salat_install;
 sudo mv ~/.salat/salat /usr/local/bin;

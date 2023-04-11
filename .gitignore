@@ -5,4 +5,4 @@ vendor/*
 .DS_Store
 
 # don't change default config
-config.json
+./config.json

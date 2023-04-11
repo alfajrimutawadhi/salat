@@ -16,7 +16,7 @@ import (
 	"github.com/jedib0t/go-pretty/v6/table"
 )
 
-var version string = "v1.0.2"
+var version string = "v1.0.3"
 
 func main() {
 	path := os.Getenv("HOME")

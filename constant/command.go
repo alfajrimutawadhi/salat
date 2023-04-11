@@ -10,8 +10,7 @@ const (
 	Calendar     = "calendar"
 	TimeMode     = "time-mode"
 
-	HeaderKey  = "734bc5631fmsh4f5cd46a576a8b1p1b4a4bjsn99c232cabd66"
-	HeaderHost = "aladhan.p.rapidapi.com"
+	HeaderHost = "api.aladhan.com/v1"
 
 	Help = `
 version			to check application version
