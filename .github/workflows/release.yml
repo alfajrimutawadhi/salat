@@ -3,6 +3,10 @@ name: Generate Release
 on:
   release:
     types: [created]
+  pull_request:
+    types: [closed]
+    branches: [master]
+  workflow_dispatch:
 
 jobs:
   releases-matrix:

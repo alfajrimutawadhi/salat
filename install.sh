@@ -24,14 +24,14 @@ fi
 mkdir salat_install;
 echo "==== Downloading salat $version for $os-$arch ====";
 wget https://github.com/alfajrimutawadhi/salat/releases/download/$version/salat-$version-$os-$arch.tar.gz;
-tar -xvf salat-$version-$os-$arch.tar.gz -C salat_install;
-rm salat-$version-$os-$arch.tar.gz;
-chmod +x salat_install/salat;
-chmod 666 salat_install/config.json;
 if [ ! -d ~/.salat ]; then
     mkdir ~/.salat;
 fi
+tar -xvf salat-$version-$os-$arch.tar.gz -C salat_install;
+rm salat-$version-$os-$arch.tar.gz;
 mv salat_install/* ~/.salat;
 rm -rf salat_install;
-sudo mv ~/.salat/salat /usr/local/bin;
+chmod +x ~/.salat/salat;
+chmod 666 ~/.salat/config.json;
+mv ~/.salat/salat /usr/local/bin;
 echo "==== Salat installed successfully ====";
