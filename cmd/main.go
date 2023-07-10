@@ -263,7 +263,7 @@ func setTimeMode(path string, req string) {
 		err := errors.New("invalid input")
 		common.HandleError(err)
 	}
-	tm, err := strconv.Atoi(req)
+	tm, err := strconv.ParseInt(req, 10, 8)
 	if err != nil {
 		common.HandleError(err)
 	}
