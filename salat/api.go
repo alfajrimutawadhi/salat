@@ -36,7 +36,7 @@ type ResponseDate struct {
 type MetaData struct {
 	Timings Salat       `json:"timings"`
 	Date    Date        `json:"date"`
-	Meta    interface{} `json:"meta"` // ignore response meta
+	Meta    interface{} `json:"-"` // ignore response meta
 }
 
 type Date struct {
