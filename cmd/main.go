@@ -16,10 +16,13 @@ import (
 	"github.com/jedib0t/go-pretty/v6/table"
 )
 
-var version string = "v1.0.3"
+var version string = "v1.0.4"
 
 func main() {
-	path := os.Getenv("HOME")
+	home, err := os.UserHomeDir()
+	if err != nil {
+		common.HandleError(err)
+	}
 
 	args := os.Args
 	if len(args) == 1 {
@@ -29,9 +32,9 @@ func main() {
 		case constant.Version:
 			fmt.Printf("Salat %s\n", version)
 		case constant.ScheduleNow:
-			scheduleNow(path)
+			scheduleNow(home)
 		case constant.ShowLocation:
-			showLocation(path)
+			showLocation(home)
 		case constant.SetLocation:
 			var err error
 			var loc salat.Location
@@ -49,11 +52,11 @@ func main() {
 			loc.Country = strings.ReplaceAll(loc.Country, "\n", "")
 			loc.City = strings.ReplaceAll(loc.City, "\n", "")
 
-			setLocation(path, &loc)
+			setLocation(home, &loc)
 		case constant.Date:
-			dateHijri(path)
+			dateHijri(home)
 		case constant.Calendar:
-			calendarHijri(path)
+			calendarHijri(home)
 		case constant.TimeMode:
 			fmt.Println("Choose time mode format")
 			var m string
@@ -61,7 +64,7 @@ func main() {
 			fmt.Println("2. 24 Hours (23:59)")
 			fmt.Print("input time mode (1/2) : ")
 			fmt.Scan(&m)
-			setTimeMode(path, m)
+			setTimeMode(home, m)
 		default:
 			fmt.Println(constant.Help)
 		}

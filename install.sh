@@ -1,5 +1,5 @@
 #!/bin/bash
-version="v1.0.3"
+version="v1.0.4"
 os=$(uname -s)
 arch=$(uname -m)
 
@@ -7,6 +7,10 @@ if [ "$os" == "Linux" ]; then
     os="linux"
 elif [ "$os" == "Darwin" ]; then
     os="darwin"
+elif [[ "$os" == MINGW* ]] || [[ "$os" == MSYS* ]]; then
+    echo "Windows detected - use the PowerShell installer instead:"
+    echo '  powershell -c "irm https://raw.githubusercontent.com/alfajrimutawadhi/salat/master/install.ps1 | iex"'
+    exit 1
 else
     echo "Unsupported OS: $os"
     exit 1

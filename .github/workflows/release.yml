@@ -11,7 +11,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        goos: [linux, darwin]
+        goos: [linux, darwin, windows]
         goarch: [amd64, arm64]
     steps:
     - uses: actions/checkout@v3
@@ -23,4 +23,5 @@ jobs:
         goversion: "https://dl.google.com/go/go1.19.linux-amd64.tar.gz"
         project_path: "./cmd"
         binary_name: "salat"
+        sha256sum: TRUE
         extra_files: config.json LICENSE README.md 
